@@ -10,5 +10,6 @@ module.exports = defineConfig({
   retries: {
     openMode: 2,
   },
+  numTestsKeptInMemory: 0,
   
 });
