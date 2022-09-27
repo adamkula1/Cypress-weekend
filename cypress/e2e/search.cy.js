@@ -4,37 +4,48 @@ describe("First part", () => {
     cy.getByData("CookiesPopup-Accept").click();
   });
 
-  it(
-    "Search",
-    () => {
-      cy.getByData("PlacePickerInputPlace-close").click();
-      cy.getByData("PlacePickerInput-origin").type("Bratislava");
-      cy.wait(1000);
-      cy.getByData("PlacePickerRow-city")
-        .should("be.visible")
-        .contains("Bratislava, Slovakia")
-        .click();
+  it("Search", () => {
+    //Clear input place picker
+    cy.getByData("PlacePickerInputPlace-close").click();
 
-      cy.getByData("PlacePickerInput-destination").type("Dublin");
-      cy.wait(1000);
-      cy.getByData("PlacePickerRow-city")
-        .should("be.visible")
-        .contains("Dublin, Ireland")
-        .click();
+    //Destination search - From
+    cy.getByData("PlacePickerInput-origin").type("Bratislava");
+    cy.wait(1000);
+    cy.getByData("PlacePickerRow-city")
+      .should("be.visible")
+      .contains("Bratislava, Slovakia")
+      .click();
 
-      cy.getByData("PassengersField-note-1").contains("1");
+    //Destination search - To
+    cy.getByData("PlacePickerInput-destination").type("Dublin");
+    cy.wait(1000);
+    cy.getByData("PlacePickerRow-city")
+      .should("be.visible")
+      .contains("Dublin, Ireland")
+      .click();
 
-      cy.get(".Checkbox__Label-sc-1xqef2c-5 ").click();
-      cy.get("[data-state='ok']").should("not.be.checked");
+    //Add one adult passenger
+    cy.getByData("PassengersField").click();
+    cy.wait(1000);
+    cy.getByData("PassengersRow-adults").find('[aria-label="increment"]').click();
+    cy.getByData("PassengersFieldFooter-done").click();
+    cy.getByData("PassengersField-note-2").contains("2");
 
-      cy.getByData("LandingSearchButton").click();
-      cy.wait(4000);
-      cy.getByData("SortBy-price").click();
-      cy.getByData("ActiveSorter-price").should("exist");
+    //Set uncheck -> Check accommodation with Booking.com
+    cy.get(".Checkbox__Label-sc-1xqef2c-5 ").click();
+    cy.get("[data-state='ok']").should("not.be.checked");
 
-      cy.wait(4000);
-      cy.getByData("BookingButton").first().click();
-      //   cy.getByData("MagicLogin-GuestTextLink").click();
-    }
-  );
+    //Confirm selection (Search)
+    cy.getByData("LandingSearchButton").click();
+    cy.wait(4000);
+
+    //Show results by cheapest
+    cy.getByData("SortBy-price").click();
+    //Verify that the displayed results match the criteria entered above
+    cy.getByData("ActiveSorter-price").should("exist");
+    cy.wait(4000);
+
+    //Continue to the reservation form
+    cy.getByData("BookingButton").first().click();
+  });
 });
